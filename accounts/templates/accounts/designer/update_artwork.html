@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load tailwind_filters %}
+<div class="bg-gray-100 min-h-screen p-8">
+
+    <h1 class="text-4xl font-bold text-blue-600 text-center mb-8">Update Artwork</h1>
+
+    <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }} 
+            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">Update Artwork</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

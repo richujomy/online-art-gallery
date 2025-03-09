@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-gray-100 min-h-screen p-8">
+    {% if messages %}
+        <div class="max-w-6xl mx-auto mb-6">
+            {% for message in messages %}
+                <div class="p-4 rounded-lg mb-2 {% if message.tags == 'success' %} bg-green-500 {% else %} bg-red-500 {% endif %} text-white shadow">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Profile Header -->
+        <div class="p-6 border-b border-gray-200">
+            <div class="flex items-center space-x-6">
+                <div class="flex-shrink-0">
+                    <svg class="h-20 w-20 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-gray-900">{{ user.username }}</h2>
+                    <p class="text-gray-600">{{ user.email }}</p>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="#" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">Orders</a>
+                    <a href="#" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition">Your Artwork</a>
+                    <a href="{% url 'accounts:update_profile' %}" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Uploads Section -->
+        <div class="p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Your Uploads</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Artwork Name</th>
+                            <th scope="col" class="px-6 py-3">Category</th>
+                            <th scope="col" class="px-6 py-3">Price</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                            <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for artwork in artworks %}
+                        <tr class="bg-white border-b hover:bg-gray-50 transition">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{artwork.title}}
+                            </th>
+                            <td class="px-6 py-4">{{artwork.category}}</td>
+                            <td class="px-6 py-4">{{artwork.price}}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium
+                                    {% if artwork.status == 'Active' %} bg-green-100 text-green-800
+                                    {% elif artwork.status == 'Pending' %} bg-yellow-100 text-yellow-800
+                                    {% else %} bg-gray-100 text-gray-800
+                                    {% endif %}">
+                                    {{artwork.status}}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{% url 'accounts:update_artwork' artwork.id %}" class="font-medium text-blue-600 hover:text-blue-900 hover:underline">Edit</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        
+                        {% if not artworks %}
+                        <tr class="bg-white">
+                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                                No artwork uploads found. Start selling your creative work today!
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

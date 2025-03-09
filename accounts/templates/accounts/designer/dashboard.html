@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% load static %}
+
+<div class="bg-gray-100 flex flex-col items-center justify-start pt-8">
+    <!-- Hero Section with Heading and Quote (Replacing Carousel) -->
+    <div class="w-3/4 mx-auto text-center py-16 bg-white rounded-lg shadow-sm">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">Welcome to Your Artist Dashboard</h1>
+        <p class="text-xl text-gray-600 italic mx-auto max-w-2xl">
+            "Art is not what you see, but what you make others see. Your creativity has the power to transform perspectives and touch hearts."
+        </p>
+    </div>
+
+    <!-- View Artworks Button -->
+    <div class="relative inline-flex items-center justify-center gap-4 group mt-8">
+        <div class="absolute inset-0 duration-1000 opacity-60 transitiona-all bg-gradient-to-r from-indigo-500 via-pink-500 to-yellow-400 rounded-xl blur-lg filter group-hover:opacity-100 group-hover:duration-200"></div>
+        <a role="button"
+           class="group relative inline-flex items-center justify-center text-base rounded-xl bg-gray-900 px-8 py-3 font-semibold text-white transition-all duration-200 hover:bg-gray-800 hover:shadow-lg hover:-translate-y-0.5 hover:shadow-gray-600/30"
+           title="payment"
+           href="{% url 'artwork_list' %}">
+            View Artworks
+            <svg aria-hidden="true" viewBox="0 0 10 10" height="10" width="10" fill="none" class="mt-0.5 ml-2 -mr-1 stroke-white stroke-2">
+                <path d="M0 5h7" class="transition opacity-0 group-hover:opacity-100"></path>
+                <path d="M1 1l4 4-4 4" class="transition group-hover:translate-x-[3px]"></path>
+            </svg>
+        </a>
+    </div>
+
+    <!-- Category Section -->
+    <div class="w-full max-w-5xl mx-auto mb-16 px-4 pt-10">
+        <h2 class="text-2xl font-semibold whitespace-nowrap dark:text-white uppercase mb-8">Explore by Category</h2>
+        
+        <!-- Category Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Traditional art -->
+            <a href="/category/Traditional art" class="group">
+                <div class="flex items-center space-x-4">
+                    <div class="w-20 h-20 overflow-hidden rounded-lg">
+                        <img src="{% static 'images/Traditional-art-icon.jpg' %}" alt="Traditional art" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold group-hover:text-blue-600 transition duration-300">Traditional art</h3>
+                        <p class="text-sm text-gray-600">344 Traditional arts</p>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Folk Art -->
+            <a href="/category/folk-art" class="group">
+                <div class="flex items-center space-x-4">
+                    <div class="w-20 h-20 overflow-hidden rounded-lg">
+                        <img src="{% static 'images/folk-art-icon.jpg' %}" alt="Folk Art" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold group-hover:text-blue-600 transition duration-300">Folk Art</h3>
+                        <p class="text-sm text-gray-600">338 Folk Arts</p>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Painting -->
+            <a href="/category/painting" class="group">
+                <div class="flex items-center space-x-4">
+                    <div class="w-20 h-20 overflow-hidden rounded-lg">
+                        <img src="{% static 'images/painting-icon.png' %}" alt="Painting" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold group-hover:text-blue-600 transition duration-300">Painting</h3>
+                        <p class="text-sm text-gray-600">10760 Paintings</p>
+                    </div>
+                </div>
+            </a>
+            
+            <!-- Sculpture -->
+            <a href="/category/sculpture" class="group">
+                <div class="flex items-center space-x-4">
+                    <div class="w-20 h-20 overflow-hidden rounded-lg">
+                        <img src="{% static 'images/sculpture-art-icon.jpg' %}" alt="Sculpture" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-300">
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold group-hover:text-blue-600 transition duration-300">Sculpture</h3>
+                        <p class="text-sm text-gray-600">352 Sculptures</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- New Releases Section -->
+    <div class="w-full max-w-6xl mx-auto px-4 mb-16">
+        <div class="w-full max-w-5xl mx-auto mb-12 px-4 pt-10">
+            <h2 class="text-2xl font-semibold whitespace-nowrap dark:text-white uppercase mb-8">New Releases</h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {% for artwork in artworks %}
+            <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+                <a href="{% url 'artwork_detail' artwork.id %}" class="block">
+                    <div class="aspect-square overflow-hidden">
+                        <img src="{{ artwork.image.url }}" alt="{{ artwork.title }}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800">{{ artwork.title }}</h3>
+                        <p class="text-gray-600">{{ artwork.designer }}</p>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="col-span-full text-center text-gray-500">No artworks found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Artists Section -->
+    <div class="w-full max-w-6xl mx-auto px-4 py-12">
+        <h2 class="text-2xl font-bold text-center mb-8">MEET OUR ARTISTS</h2>
+        
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+            <button class="px-6 py-2 bg-gray-600 text-white rounded-md">Artist of the Week</button>
+            <button class="px-6 py-2 bg-white text-gray-600 hover:bg-gray-100 rounded-md">Popular Artist</button>
+            <button class="px-6 py-2 bg-white text-gray-600 hover:bg-gray-100 rounded-md">Trending Artist</button>
+            <button class="px-6 py-2 bg-white text-gray-600 hover:bg-gray-100 rounded-md">Most Visited</button>
+            <button class="px-6 py-2 bg-white text-gray-600 hover:bg-gray-100 rounded-md">All Artists</button>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {% for designer in designers %}
+            <div class="flex flex-col items-center">
+                <div class="w-40 h-40 mb-3 overflow-hidden rounded-full">
+                    <img src="{% static 'images/artgallery.png' %}" 
+                         alt="{{ designer.Username }}" 
+                         class="w-full h-full object-cover">
+                </div>
+                <h3 class="text-lg font-medium text-gray-800 mb-1">{{ designer.user.username }}</h3>
+            </div>
+            {% empty %}
+            <p class="col-span-full text-center text-gray-500">No artists found.</p>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-8">
+            <a href="#" class="inline-block px-6 py-2 border border-black-500 text-black-500 rounded-md hover:bg-black-50 transition duration-300">
+                View More
+            </a>
+        </div>
+    </div>
+
+    <!-- Find Art You Love Section -->
+    <div class="bg-gray-100 flex rounded-lg shadow-lg max-w-6xl mx-auto overflow-hidden mt-10">
+        <div class="w-1/2">
+            <img src="{% static 'images/findartulove.jpg' %}" alt="Art Image" class="w-full h-full object-cover">
+        </div>
+        <div class="w-1/2 p-10">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Find Art You Love</h1>
+            <p class="text-gray-600 mb-6">
+                "At Artzy, we make it our mission to help you discover and buy from the best emerging artists around the world. 
+                Whether you're looking to discover a new artist, add a statement piece to your home, 
+                or commemorate an important life event, Artzy Art is your portal to thousands of original works by today's top artists."
+            </p>
+            <div class="text-gray-700 font-semibold mb-6">
+                Chief Curator & VP, Art Advisory
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
