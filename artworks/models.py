@@ -30,6 +30,7 @@ class Artwork(models.Model):
     image = models.ImageField(upload_to='artworks/')  
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)  
     designer = models.ForeignKey(User, on_delete=models.CASCADE) 
+    sold = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     status = models.CharField(max_length=20, choices= STATUS_COICES, default='pending')

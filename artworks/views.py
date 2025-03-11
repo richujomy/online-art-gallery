@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from accounts.models import Profile
 
 
-@login_required
+
 def artwork_list(request):
     artworks = Artwork.objects.filter(status='approved')  # Fetch all artworks from the database
     return render(request, 'artworks/artwork_list.html', {'artworks': artworks})

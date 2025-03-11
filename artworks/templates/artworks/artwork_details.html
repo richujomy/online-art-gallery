@@ -43,6 +43,15 @@
                     
                     <!-- Call to Action Button -->
                     <div class="mt-auto flex space-x-2">
+                    {% if artwork.sold %}
+                    <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
+                        text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
+                        focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
+                        dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
+                        dark:hover:bg-gray-600 dark:focus:ring-gray-800" disabled>
+                        Sold
+                    </button>
+                    {% else %}
                       <a href="{% url 'cart:add_to_cart' artwork.id %}">                 
                     <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
                         text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
@@ -50,6 +59,7 @@
                         dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
                         dark:hover:bg-gray-600 dark:focus:ring-gray-800">Add to Cart 
                     </button></a> 
+                    <a href="{% url 'checkout' artwork.id %}">
                     <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
                         text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
                         focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
@@ -57,6 +67,8 @@
                         dark:hover:bg-gray-600 dark:focus:ring-gray-800">
                         Buy now
                     </button>
+                    </a>
+                    {% endif %}
                     </div>  
                     {% if messages %}
                     <div class="mb-4">

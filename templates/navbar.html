@@ -1,0 +1,106 @@
+{% load static  %}
+
+<header class="sticky top-0 z-50">
+    <!-- lg+ -->
+
+    <div class="bg-base-200 border-b border-gray-200">
+        <div class="px-4 mx-auto sm:px-6 lg:px-8 ">
+            <nav class="relative flex items-center justify-between h-16 lg:h-20">
+             
+            <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
+                <img src="{% static 'images/artgallery.png' %}" alt="Art Gallery Logo" class="h-10"  />
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Artzy</span>
+            </a>
+              <div class="hidden lg:flex lg:items-center lg:space-x-10" id="navbar">
+                  {% if user.is_authenticated and user.profile.role == 'designer' %}
+                    <a href="{% url 'accounts:designer_dashboard' %}" title="" class="text-base font-medium text-black"> Home </a> 
+                    <a href="{% url 'upload_artwork' %}" title="" class="text-base font-medium text-black"> Upload Artwork </a>
+                        {% else %}
+                  <a href="{% url 'home' %}" title="" class="text-base font-medium text-black"> Home </a>
+
+                  {% endif %}
+
+                  <a href="#" title="" class="text-base font-medium text-black"> Artists </a>
+              </div>
+
+            <div class="ms-5 flex w-[30%] items-center justify-between">
+                <input
+                    type="search"
+                    class="relative m-0 block w-[1px] min-w-0 flex-auto rounded border border-solid border-secondary-500 bg-transparent bg-clip-padding px-3 py-1.5 text-base font-normal text-surface transition duration-300 ease-in-out focus:border-primary focus:text-gray-700 focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:bg-body-dark dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill"
+                    placeholder="Search Art or Artists"
+                    aria-label="Search"
+                    aria-describedby="button-addon2" />
+
+                <!--Search icon-->
+                <span
+                    class="flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center text-base font-normal text-gray-600 dark:text-white [&>svg]:w-5"
+                    id="basic-addon2">
+                    <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor">
+                    <path
+                        fill-rule="evenodd"
+                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                        clip-rule="evenodd" />
+                    </svg>
+                </span>
+                </div>
+                
+
+                    <button type="button" class="inline-flex p-2 ml-5 text-black transition-all duration-200 rounded-md lg:hidden focus:bg-gray-100 hover:bg-gray-100 menu-button" data-collapse-toggle="navbar">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                        </svg>
+                    </button>
+
+
+
+        
+                <div class="hidden lg:flex lg:items-center lg:space-x-10">
+                {% if user.is_authenticated %}
+                    {% if user.profile.role == 'designer' %}
+                        <!-- Designer specific content -->
+                        <div class="flex items-center gap-4">
+                            <a href="{% url 'accounts:user_profile' %}" class="flex items-center gap-2 hover:text-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-6 w-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="font-medium text-base font-medium text-black">Hi, {{ user.username }}</span>
+                            </a>
+                            <a href="{% url 'accounts:logout' %}" title="" class="text-base font-medium text-black"> Logout </a>
+                        </div>
+                    {% else %}
+                        <!-- Regular user content -->
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                             <a href="{% url 'accounts:user_profile' %}" class="flex items-center gap-2 hover:text-blue-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-6 w-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span class="font-medium">Hi, {{ user.username }}</span>
+                              </a>
+                            </div>
+                            <a href="{% url 'accounts:logout' %}" title="" class="text-base font-medium text-black hover:text-blue-600"> Logout </a>
+                        </div>
+                        {% endif %}
+                        <a href="{% url 'cart:cart' %}" title="" class="flex items-center justify-center w-10 h-10 text-white bg-black rounded-full">
+                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </a>
+                  {% else %}
+                        <!-- Non-authenticated user content -->
+                        <a href="{% url 'accounts:login' %}" title="" class="text-base font-medium text-black hover:text-blue-600"> Login </a>
+                        <a href="{% url 'accounts:signup' %}" title="" class="text-base font-medium text-black hover:text-blue-600"> Register </a>
+                {% endif %}
+
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- xs to lg -->
+   
+</header>
+

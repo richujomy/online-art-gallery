@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block footer %}{% endblock%}
+
+{% block content %}
+
+
+<div class="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+  <!-- Navbar with cancel link -->
+  <div class="flex justify-between items-center mb-6">
+    <a href="javascript:history.back()" class="text-gray-600 hover:text-gray-800 font-medium">&larr; Cancel</a>
+  </div>
+
+  <form method="post">
+    {% csrf_token %}
+    <h2 class="text-2xl font-bold text-gray-800">Payment for "{{ artwork.title }}"</h2>
+    
+    <div class="mt-4 mb-6 bg-gray-50 p-4 rounded-md">
+      <div class="flex justify-between items-center">
+        <span class="text-gray-700 font-medium">Total Price:</span>
+        <span class="text-lg font-bold text-gray-800">${{ artwork.price }}</span>
+      </div>
+    </div>
+    
+    <!-- Payment Method Selection -->
+    <div class="mt-6">
+      <label class="block text-base text-gray-800 mb-2">Select Payment Method</label>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="relative">
+          <input type="radio" id="card-option" name="payment-method" value="card" checked 
+            class="peer absolute opacity-0 w-0 h-0" />
+          <label for="card-option" 
+            class="flex items-center justify-center p-3 border border-gray-300 rounded-md cursor-pointer peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:bg-gray-50">
+            <span class="font-medium">Credit Card</span>
+          </label>
+        </div>
+        
+        <div class="relative">
+          <input type="radio" id="upi-option" name="payment-method" value="upi" 
+            class="peer absolute opacity-0 w-0 h-0" />
+          <label for="upi-option" 
+            class="flex items-center justify-center p-3 border border-gray-300 rounded-md cursor-pointer peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:bg-gray-50">
+            <span class="font-medium">UPI</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Fields -->
+    <div id="card-fields" class="grid gap-4">
+      <div>
+        <label class="block text-base text-gray-800 mb-2">Card Number</label>
+        <input type="text" placeholder="xxxx xxxx xxxx xxxx"
+          class="px-4 py-2.5 bg-transparent text-gray-800 w-full text-sm border border-gray-300 rounded-md focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" />
+      </div>
+    </div>
+
+    <!-- UPI Fields -->
+    <div id="upi-fields" class="hidden grid gap-4">
+      <div>
+        <label class="block text-base text-gray-800 mb-2">UPI ID</label>
+        <input type="text" placeholder="yourname@upi"
+          class="px-4 py-2.5 bg-transparent text-gray-800 w-full text-sm border border-gray-300 rounded-md focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" />
+      </div>
+    </div>
+
+    <button type="submit" class="mt-8 text-sm px-4 py-3 w-full font-semibold tracking-wide bg-purple-600 hover:bg-purple-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200">Pay Now</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('card-option').addEventListener('change', function() {
+    document.getElementById('card-fields').classList.remove('hidden');
+    document.getElementById('upi-fields').classList.add('hidden');
+  });
+  
+  document.getElementById('upi-option').addEventListener('change', function() {
+    document.getElementById('card-fields').classList.add('hidden');
+    document.getElementById('upi-fields').classList.remove('hidden');
+  });
+</script>
+
+{% endblock  %}

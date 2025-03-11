@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+
+<div class="max-w-md mx-auto p-8 bg-white rounded-lg shadow-md text-center">
+  <div class="mb-6">
+    <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+    </div>
+    
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">Order Successful!</h2>
+    <p class="text-gray-600 mb-8">Thank you for your purchase. Your order has been placed successfully.</p>
+  </div>
+  
+  <div class="bg-gray-50 p-4 rounded-md mb-6">
+    <p class="text-sm text-gray-600 mb-2">Order confirmation has been sent to your email address</p>
+    <p class="text-sm text-gray-800 font-medium">Your order number: <span class="font-bold text-purple-600">#ORD-{{ order.id }}</span></p>
+  </div>
+  
+  <a href="{% url 'home' %}" class="inline-block">
+    <button class="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md shadow-sm transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500">
+      Go to Home
+    </button>
+  </a>
+</div>
+
+
+{% endblock  %}
