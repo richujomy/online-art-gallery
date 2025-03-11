@@ -5,7 +5,7 @@ from django.contrib import messages
 # Create your views here.
 
 def cart_view(request):
-    cart_items = Cart.objects.filter(user=request.user)
+    cart_items = Cart.objects.filter(user=request.user, artwork__sold=False)
     total_price = sum(item.artwork.price for item in cart_items)
     return render(request, "cart/cart.html" , {'cart_items': cart_items, 'total_price': total_price})
 
