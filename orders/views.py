@@ -11,11 +11,10 @@ from .models import Order
 @login_required
 def checkout(request, artwork_id=None):
     profile, created = Profile.objects.get_or_create(user=request.user)
-
-    # If address is missing, redirect to enter address page
+    # if address is missing, redirect to enter address page
     if not all([profile.first_name, profile.last_name, profile.street_address, 
                 profile.city, profile.state, profile.postal_code, profile.country]):
-        return redirect('enter_address')  # No need for artwork_id, applies to all checkouts
+        return redirect('enter_address') 
 
     if artwork_id:  # Case 1: "Buy Now" - Single artwork checkout
         artwork = get_object_or_404(Artwork, id=artwork_id)
@@ -32,7 +31,6 @@ def checkout(request, artwork_id=None):
 
 
 
-# Address Entry View
 @login_required
 def enter_address(request, artwork_ids):
     profile, created = Profile.objects.get_or_create(user=request.user)
@@ -41,7 +39,7 @@ def enter_address(request, artwork_ids):
         form = AddressForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            return redirect('order_summary', artwork_ids=artwork_ids)  # Redirect to order summary
+            return redirect('order_summary', artwork_ids=artwork_ids) 
     else:
         form = AddressForm(instance=profile)
 
@@ -49,7 +47,7 @@ def enter_address(request, artwork_ids):
 
 
 
-# Order Summary View
+
 @login_required
 def order_summary(request, artwork_ids):
     if not artwork_ids: 
@@ -72,7 +70,7 @@ def order_summary(request, artwork_ids):
 # Payment View
 @login_required
 def payment(request, artwork_ids):
-    artwork_ids = artwork_ids.split(",")  # Convert "1,2,3" → ["1", "2", "3"]
+    artwork_ids = artwork_ids.split(",") 
     artworks = Artwork.objects.filter(id__in=artwork_ids)
 
     # Prevent ordering sold artworks
@@ -88,7 +86,7 @@ def payment(request, artwork_ids):
                 user=request.user,
                 artwork=art,
                 quantity=1,
-                total_price=art.price,  # Each artwork has its own price
+                total_price=art.price,  # each artwork has its own price
                 payment_status='Completed',
             )
             art.sold = True  # Mark as sold

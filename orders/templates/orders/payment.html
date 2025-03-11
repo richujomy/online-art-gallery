@@ -19,12 +19,12 @@
       {% for art in artworks %} <!-- Loop through multiple artworks -->
         <div class="flex justify-between items-center border-b pb-2 mb-2">
           <span class="text-gray-700">{{ art.title }}</span>
-          <span class="text-lg font-bold text-gray-800">${{ art.price }}</span>
+          <span class="text-lg font-bold text-gray-800">₹{{ art.price }}</span>
         </div>
       {% endfor %}
       <div class="flex justify-between items-center mt-4">
         <span class="text-gray-700 font-medium">Total Price:</span>
-        <span class="text-xl font-bold text-gray-800">${{ total_price }}</span>
+        <span class="text-xl font-bold text-gray-800">₹{{ total_price }}</span>
       </div>
     </div>
 
