@@ -10,50 +10,39 @@ from django.utils import timezone
 from django.db.models import Count
 from artworks.forms import ArtworkForm
 from django.contrib.auth import update_session_auth_hash
+from .utils import validate_signup
+
 
 
 def signup_view(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        email = request.POST.get('email')
+        username = request.POST.get('username').strip()  #strip method ensures " eren " and "eren" are treated the same.
+        email = request.POST.get('email').strip()
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
-        role = request.POST.get('role', 'customer')  
+        role = request.POST.get('role', 'customer').lower()
 
-
-        if not username or not email or not password1 or not password2:
-            messages.error(request, "All fields are required.")
-            return render(request, "signup.html")
-
-
-        if password1 != password2:
-            messages.error(request, "Passwords do not match.")
-            return render(request, "signup.html")
-
-
-        if User.objects.filter(username=username).exists():
-            messages.error(request, "Username already taken. Try a different one.")
-            return render(request, "signup.html")
-
-
-        if User.objects.filter(email=email).exists():
-            messages.error(request, "Email is already registered.")
-            return render(request, "signup.html")
+        # validate form data using util function
+        errors = validate_signup(username, email, password1, password2)
+        if errors:
+            messages.error(request, errors)
+            return render(request, "signup.html",{
+                "username": username,
+                "email": email,
+                "role": role
+            }) 
 
         # Create user
         user = User.objects.create_user(username=username, email=email, password=password1)
         user.save()
 
         # Create profile instance
-        Profile.objects.create(user=user, role=role) 
+        Profile.objects.create(user=user, role=role)
 
         messages.success(request, "Account Created Successfully")
         return redirect("accounts:login")
 
     return render(request, "signup.html")
-
-
-
 
 def login_view(request): 
     if request.method == "POST":
