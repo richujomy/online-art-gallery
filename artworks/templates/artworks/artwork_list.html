@@ -1,29 +1,48 @@
-<!-- artworks/templates/artworks/artwork_list.html -->
 {% extends 'base.html' %}
 {% load humanize %}
 
 {% block content %}
   <div class="w-full max-w-6xl mx-auto px-4 mb-16">
-        <h2 class="text-2xl font-bold text-gray-800 mb-8">Featured Artworks</h2>
-        
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {% for artwork in artworks %}
-            <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-                <a href="{% url 'artwork_detail' artwork.id %}" class="block">
-                    <div class="aspect-square overflow-hidden">
-                        <img src="{{ artwork.image.url }}" alt="{{ artwork.title }}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold text-gray-800">{{ artwork.title }}</h3>
-                        <p class="text-gray-600">{{ artwork.designer }}</p>
-                        <p class="text-sm text-gray-700 mt-1">{{ artwork.dimensions }}</p>
-                        <p class="text-neutral-700 font-medium mt-2">₹{{ artwork.price|floatformat:2|intcomma }}</p>
-                    </div>
-                </a>
+    {% if search_query %}
+      <div class="flex justify-between items-center mb-8 pt-6">
+        <h2 class="text-2xl font-bold text-gray-800">
+          Search Results for "{{ search_query }}"
+        </h2>
+        <a href="{% url 'artwork_list' %}" class="flex items-center text-primary-600 hover:text-primary-800 transition-colors">
+          View All Artworks
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+      
+      {% if artworks %}
+        <p class="text-gray-600 mb-4">{{ artworks.count }} artwork(s) found</p>
+      {% else %}
+        <p class="text-gray-600 mb-4">No artworks found matching your search.</p>
+      {% endif %}
+    {% else %}
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 pt-6">Featured Artworks</h2>
+    {% endif %}
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {% for artwork in artworks %}
+        <div class="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+          <a href="{% url 'artwork_detail' artwork.id %}" class="block">
+            <div class="aspect-square overflow-hidden">
+              <img src="{{ artwork.image.url }}" alt="{{ artwork.title }}" class="w-full h-full object-cover">
             </div>
-            {% empty %}
-            <p class="col-span-full text-center text-gray-500">No artworks found.</p>
-            {% endfor %}
+            <div class="p-4">
+              <h3 class="text-lg font-semibold text-gray-800">{{ artwork.title }}</h3>
+              <p class="text-gray-600">{{ artwork.designer }}</p>
+              <p class="text-sm text-gray-700 mt-1">{{ artwork.dimensions }}</p>
+              <p class="text-neutral-700 font-medium mt-2">₹{{ artwork.price|floatformat:2|intcomma }}</p>
+            </div>
+          </a>
         </div>
+      {% empty %}
+        <p class="col-span-full text-center text-gray-500">No artworks found.</p>
+      {% endfor %}
     </div>
+  </div>
 {% endblock %}

@@ -4,12 +4,32 @@ from .forms import ArtworkForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from accounts.models import Profile
+from django.db.models import Q
 
 
+from django.db.models import Q
 
 def artwork_list(request):
-    artworks = Artwork.objects.filter(status='approved')  # Fetch all artworks from the database
-    return render(request, 'artworks/artwork_list.html', {'artworks': artworks})
+    query = request.GET.get('search', '')
+    
+    # Filter approved artworks
+    artworks = Artwork.objects.filter(status='approved')
+    
+    # If there's a search query, filter the artworks
+    if query:
+        artworks = artworks.filter(
+            Q(title__icontains=query) |  # Search in title
+            Q(designer__username__icontains=query) |  # Search by designer username
+            Q(description__icontains=query) |  # Search in description
+            Q(category__icontains=query)  # Search in category
+        )
+    
+    context = {
+        'artworks': artworks,
+        'search_query': query
+    }
+    
+    return render(request, 'artworks/artwork_list.html', context)
 
 @login_required
 def artwork_detail(request, artwork_id):
