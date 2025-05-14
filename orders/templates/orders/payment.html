@@ -10,7 +10,7 @@
     <a href="javascript:history.back()" class="text-gray-600 hover:text-gray-800 font-medium">&larr; Cancel</a>
   </div>
 
-  <form method="post">
+  <form method="post" id="payment-form" novalidate>
     {% csrf_token %}
     <h2 class="text-2xl font-bold text-gray-800">Payment Details</h2>
 
@@ -33,7 +33,7 @@
       <label class="block text-base text-gray-800 mb-2">Select Payment Method</label>
       <div class="grid grid-cols-2 gap-4 mb-6">
         <div class="relative">
-          <input type="radio" id="card-option" name="payment-method" value="card" checked 
+          <input type="radio" id="card-option" name="payment_method" value="card" checked 
             class="peer absolute opacity-0 w-0 h-0" />
           <label for="card-option" 
             class="flex items-center justify-center p-3 border border-gray-300 rounded-md cursor-pointer peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:bg-gray-50">
@@ -42,7 +42,7 @@
         </div>
         
         <div class="relative">
-          <input type="radio" id="upi-option" name="payment-method" value="upi" 
+          <input type="radio" id="upi-option" name="payment_method" value="upi" 
             class="peer absolute opacity-0 w-0 h-0" />
           <label for="upi-option" 
             class="flex items-center justify-center p-3 border border-gray-300 rounded-md cursor-pointer peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:bg-gray-50">
@@ -55,34 +55,269 @@
     <!-- Card Fields -->
     <div id="card-fields" class="grid gap-4">
       <div>
-        <label class="block text-base text-gray-800 mb-2">Card Number</label>
-        <input type="text" placeholder="xxxx xxxx xxxx xxxx"
+        <label class="block text-base text-gray-800 mb-2" for="card-number">Card Number</label>
+        <input type="text" id="card-number" name="card_number" placeholder="xxxx xxxx xxxx xxxx" maxlength="19"
           class="px-4 py-2.5 bg-transparent text-gray-800 w-full text-sm border border-gray-300 rounded-md focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" />
+        <p class="mt-1 text-sm text-red-600 hidden" id="card-number-error"></p>
+      </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-base text-gray-800 mb-2" for="expiry-date">Expiry Date</label>
+          <input type="text" id="expiry-date" name="expiry_date" placeholder="MM/YY" maxlength="5"
+            class="px-4 py-2.5 bg-transparent text-gray-800 w-full text-sm border border-gray-300 rounded-md focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" />
+          <p class="mt-1 text-sm text-red-600 hidden" id="expiry-date-error"></p>
+        </div>
+        
+        <div>
+          <label class="block text-base text-gray-800 mb-2" for="cvv">CVV</label>
+          <input type="text" id="cvv" name="cvv" placeholder="xxx" maxlength="4"
+            class="px-4 py-2.5 bg-transparent text-gray-800 w-full text-sm border border-gray-300 rounded-md focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" />
+          <p class="mt-1 text-sm text-red-600 hidden" id="cvv-error"></p>
+        </div>
+      </div>
+      
+      <div>
+        <label class="block text-base text-gray-800 mb-2" for="card-name">Cardholder Name</label>
+        <input type="text" id="card-name" name="card_name" placeholder="Name on card"
+          class="px-4 py-2.5 bg-transparent text-gray-800 w-full text-sm border border-gray-300 rounded-md focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" />
+        <p class="mt-1 text-sm text-red-600 hidden" id="card-name-error"></p>
       </div>
     </div>
 
     <!-- UPI Fields -->
     <div id="upi-fields" class="hidden grid gap-4">
       <div>
-        <label class="block text-base text-gray-800 mb-2">UPI ID</label>
-        <input type="text" placeholder="yourname@upi"
+        <label class="block text-base text-gray-800 mb-2" for="upi-id">UPI ID</label>
+        <input type="text" id="upi-id" name="upi_id" placeholder="yourname@upi"
           class="px-4 py-2.5 bg-transparent text-gray-800 w-full text-sm border border-gray-300 rounded-md focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" />
+        <p class="mt-1 text-sm text-red-600 hidden" id="upi-id-error"></p>
       </div>
     </div>
 
-    <button type="submit" class="mt-8 text-sm px-4 py-3 w-full font-semibold tracking-wide bg-purple-600 hover:bg-purple-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200">Pay Now</button>
+    <button type="submit" id="payment-button" 
+      class="mt-8 text-sm px-4 py-3 w-full font-semibold tracking-wide bg-purple-600 hover:bg-purple-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200">
+      Pay Now
+    </button>
   </form>
 </div>
 
 <script>
-  document.getElementById('card-option').addEventListener('change', function() {
-    document.getElementById('card-fields').classList.remove('hidden');
-    document.getElementById('upi-fields').classList.add('hidden');
-  });
-  
-  document.getElementById('upi-option').addEventListener('change', function() {
-    document.getElementById('card-fields').classList.add('hidden');
-    document.getElementById('upi-fields').classList.remove('hidden');
+  document.addEventListener('DOMContentLoaded', function() {
+    // Elements
+    const cardOption = document.getElementById('card-option');
+    const upiOption = document.getElementById('upi-option');
+    const cardFields = document.getElementById('card-fields');
+    const upiFields = document.getElementById('upi-fields');
+    const paymentForm = document.getElementById('payment-form');
+    
+    // Credit card input fields
+    const cardNumber = document.getElementById('card-number');
+    const expiryDate = document.getElementById('expiry-date');
+    const cvv = document.getElementById('cvv');
+    const cardName = document.getElementById('card-name');
+    const upiId = document.getElementById('upi-id');
+    
+    // Error elements
+    const cardNumberError = document.getElementById('card-number-error');
+    const expiryDateError = document.getElementById('expiry-date-error');
+    const cvvError = document.getElementById('cvv-error');
+    const cardNameError = document.getElementById('card-name-error');
+    const upiIdError = document.getElementById('upi-id-error');
+    
+    // Toggle payment methods
+    cardOption.addEventListener('change', function() {
+      if (this.checked) {
+        cardFields.classList.remove('hidden');
+        upiFields.classList.add('hidden');
+      }
+    });
+    
+    upiOption.addEventListener('change', function() {
+      if (this.checked) {
+        upiFields.classList.remove('hidden');
+        cardFields.classList.add('hidden');
+      }
+    });
+    
+    // Format card number with spaces
+    cardNumber.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+      let formattedValue = '';
+      
+      for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) {
+          formattedValue += ' ';
+        }
+        formattedValue += value[i];
+      }
+      
+      e.target.value = formattedValue;
+    });
+    
+    // Format expiry date
+    expiryDate.addEventListener('input', function(e) {
+      let value = e.target.value.replace(/\D/g, '');
+      
+      if (value.length > 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+      }
+      
+      e.target.value = value;
+    });
+    
+    // Allow only numbers for CVV
+    cvv.addEventListener('input', function(e) {
+      e.target.value = e.target.value.replace(/\D/g, '');
+    });
+    
+    // Luhn algorithm for credit card validation
+    function isValidCreditCard(number) {
+      // Remove spaces and non-digit characters
+      const cardNum = number.replace(/\D/g, '');
+      
+      if (cardNum.length < 13 || cardNum.length > 19) {
+        return false;
+      }
+      
+      let sum = 0;
+      let doubleUp = false;
+      
+      for (let i = cardNum.length - 1; i >= 0; i--) {
+        let digit = parseInt(cardNum.charAt(i));
+        
+        if (doubleUp) {
+          digit *= 2;
+          if (digit > 9) digit -= 9;
+        }
+        
+        sum += digit;
+        doubleUp = !doubleUp;
+      }
+      
+      return sum % 10 === 0;
+    }
+    
+    // Validate expiry date
+    function isValidExpiryDate(value) {
+      if (!/^\d{2}\/\d{2}$/.test(value)) {
+        return false;
+      }
+      
+      const [month, year] = value.split('/');
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear() % 100; // Get last two digits
+      const currentMonth = currentDate.getMonth() + 1; // Jan = 1, Dec = 12
+      
+      const expiryMonth = parseInt(month, 10);
+      const expiryYear = parseInt(year, 10);
+      
+      if (expiryMonth < 1 || expiryMonth > 12) {
+        return false;
+      }
+      
+      // Check if card is expired
+      if (expiryYear < currentYear || (expiryYear === currentYear && expiryMonth < currentMonth)) {
+        return false;
+      }
+      
+      return true;
+    }
+    
+    // Validate CVV
+    function isValidCVV(cvv) {
+      return /^\d{3,4}$/.test(cvv);
+    }
+    
+    // Validate UPI ID
+    function isValidUPI(upiId) {
+      // Basic UPI validation pattern: username@provider
+      return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9]+$/i.test(upiId);
+    }
+    
+    // Show error message
+    function showError(element, errorElement, message) {
+      errorElement.textContent = message;
+      errorElement.classList.remove('hidden');
+      element.classList.add('border-red-500');
+    }
+    
+    // Clear error message
+    function clearError(element, errorElement) {
+      errorElement.textContent = '';
+      errorElement.classList.add('hidden');
+      element.classList.remove('border-red-500');
+    }
+    
+    // Form submission
+    paymentForm.addEventListener('submit', function(e) {
+      // Prevent default only for client-side validation
+      // The form will be submitted if validation passes
+      let isValid = true;
+      
+      // Reset all errors
+      [cardNumberError, expiryDateError, cvvError, cardNameError, upiIdError].forEach(error => {
+        error.classList.add('hidden');
+      });
+      
+      if (cardOption.checked) {
+        // Validate card number
+        if (!cardNumber.value.trim()) {
+          showError(cardNumber, cardNumberError, 'Card number is required');
+          isValid = false;
+        } else if (!isValidCreditCard(cardNumber.value)) {
+          showError(cardNumber, cardNumberError, 'Please enter a valid card number');
+          isValid = false;
+        } else {
+          clearError(cardNumber, cardNumberError);
+        }
+        
+        // Validate expiry date
+        if (!expiryDate.value.trim()) {
+          showError(expiryDate, expiryDateError, 'Expiry date is required');
+          isValid = false;
+        } else if (!isValidExpiryDate(expiryDate.value)) {
+          showError(expiryDate, expiryDateError, 'Please enter a valid expiry date (MM/YY)');
+          isValid = false;
+        } else {
+          clearError(expiryDate, expiryDateError);
+        }
+        
+        // Validate CVV
+        if (!cvv.value.trim()) {
+          showError(cvv, cvvError, 'CVV is required');
+          isValid = false;
+        } else if (!isValidCVV(cvv.value)) {
+          showError(cvv, cvvError, 'Please enter a valid CVV');
+          isValid = false;
+        } else {
+          clearError(cvv, cvvError);
+        }
+        
+        // Validate cardholder name
+        if (!cardName.value.trim()) {
+          showError(cardName, cardNameError, 'Cardholder name is required');
+          isValid = false;
+        } else {
+          clearError(cardName, cardNameError);
+        }
+      } else if (upiOption.checked) {
+        // Validate UPI ID
+        if (!upiId.value.trim()) {
+          showError(upiId, upiIdError, 'UPI ID is required');
+          isValid = false;
+        } else if (!isValidUPI(upiId.value)) {
+          showError(upiId, upiIdError, 'Please enter a valid UPI ID (e.g., username@upi)');
+          isValid = false;
+        } else {
+          clearError(upiId, upiIdError);
+        }
+      }
+      
+      if (!isValid) {
+        e.preventDefault(); // Prevent form submission if validation fails
+      }
+    });
   });
 </script>
 

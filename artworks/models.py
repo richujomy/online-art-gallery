@@ -1,8 +1,6 @@
 from django.db import models
 
 # Create your models here.
-# artworks/models.py
-from django.db import models
 from django.contrib.auth.models import User
 
 
@@ -15,6 +13,22 @@ class Artwork(models.Model):
         ('drawing', 'Drawing'),
         ('sculpture', 'Sculpture'),
         ('traditional_art', 'Traditional Art'),
+        ('crafts', 'Crafts'),
+        ('photography', 'Photography'),
+        ('mixed_media', 'Mixed Media'),
+        ('ceramics', 'Ceramics'),
+        ('textile_art', 'Textile Art'),
+        ('woodwork', 'Woodwork'),
+        ('jewelry', 'Jewelry'),
+        ('glass_art', 'Glass Art'),
+        ('printmaking', 'Printmaking'),
+        ('collage', 'Collage'),
+        ('origami', 'Origami'),
+        ('embroidery', 'Embroidery'),
+        ('miniature_art', 'Miniature Art'),
+        ('street_art', 'Street Art'),
+        ('eco_art', 'Eco Art'),
+        ('metal_art', 'Metal Art'),
     ]
 
     STATUS_COICES = [
@@ -54,3 +68,19 @@ class Artwork(models.Model):
             self.status = 'approved'
         else:
             self.status = 'pending'
+
+
+
+class ArtworkMessage(models.Model):
+    artwork = models.ForeignKey('Artwork', on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Message from {self.sender.username} to {self.receiver.username}"

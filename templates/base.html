@@ -1,47 +1,88 @@
-
 {% load static tailwind_tags %}
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Online Art Gallery{% endblock %}</title>
+    
+    <!-- Stylesheets -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <title>Document</title>
     {% tailwind_css %}
+    
+    <style>
+        /* Override any existing message styles */
+        [id^="messages-container"] {
+            display: none !important;
+        }
+        #base-messages-container {
+            display: block !important;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: 80%;
+            max-width: 400px;
+        }
+        .message-alert {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.3s ease-in-out;
+        }
+        .message-alert.hiding {
+            opacity: 0;
+            transform: translateY(-100%);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
 </head>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const messages = document.querySelectorAll('.message-alert');
-    
-    messages.forEach(message => {
-        // Start fade out after 4 seconds
-        setTimeout(() => {
-            message.classList.add('opacity-0', 'translate-x-full');
-        }, 3000);
-        
-        // Remove from DOM after fade completes
-        setTimeout(() => {
-            message.remove();
-        }, 3000);
-    });
-});
-
-
-
-</script>
-<body>
-    
+<body class="flex flex-col min-h-screen">
     {% include 'navbar.html' %}
 
-    {% block content %}
-    
-    {% endblock  %}
+    <!-- Single Source of Truth for Messages -->
+    {% if messages %}
+    <div id="base-messages-container">
+        
+    </div>
+    {% endif %}
 
-     {% block footer %}
+    <!-- Main Content -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block footer %}
         {% include 'footer.html' %}
     {% endblock %}
 
-  </body>
+    <!-- Core JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Hide all other message containers
+        document.querySelectorAll('[id^="messages-container"]').forEach(container => {
+            if (container.id !== 'base-messages-container') {
+                container.style.display = 'none';
+            }
+        });
+
+        // Handle base messages
+        const messages = document.querySelectorAll('#base-messages-container .message-alert');
+        messages.forEach(message => {
+            setTimeout(() => {
+                message.classList.add('hiding');
+                message.addEventListener('transitionend', () => {
+                    message.remove();
+                });
+            }, 3000);
+        });
+    });
+    </script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

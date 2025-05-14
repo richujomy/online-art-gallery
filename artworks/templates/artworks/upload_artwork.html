@@ -1,28 +1,210 @@
-<!-- artworks/templates/artworks/upload_artwork.html -->
 {% extends 'base.html' %}
 
 {% block content %}
 
 {% load tailwind_filters %}
 <div class="bg-gray-100 min-h-screen p-8">
-          {% if messages %}
-                <div class="mb-4">
-                    {% for message in messages %}
-                        <div class="p-3 text-white rounded-md {% if message.tags == 'success' %} bg-green-500 {% else %} bg-red-500 {% endif %}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="p-3 text-white rounded-md {% if message.tags == 'success' %} bg-green-500 {% else %} bg-red-500 {% endif %}">
+                    {{ message }}
                 </div>
-            {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <h1 class="text-4xl font-bold text-blue-600 text-center mb-8">Upload Artwork</h1>
 
     <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="artwork-form" novalidate>
             {% csrf_token %}
-            {{ form|crispy }} 
-            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">Upload Artwork</button>
+            {{ form|crispy }}
+            <div class="mt-6">
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-200">
+                    Upload Artwork
+                </button>
+            </div>
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('artwork-form');
+    
+    // Get form elements by their ids (crispy forms typically adds 'id_' prefix)
+    const titleField = document.getElementById('id_title');
+    const descriptionField = document.getElementById('id_description');
+    const priceField = document.getElementById('id_price');
+    const sizeField = document.getElementById('id_size');
+    const categoryField = document.getElementById('id_category');
+    const imageField = document.getElementById('id_image');
+    
+    // Add custom validation
+    form.addEventListener('submit', function(e) {
+        let isValid = true;
+        
+        // Title validation
+        if (!titleField.value.trim()) {
+            showError(titleField, "Please provide the title of your artwork.");
+            isValid = false;
+        } else if (titleField.value.length < 3) {
+            showError(titleField, "Title must be at least 3 characters.");
+            isValid = false;
+        } else if (titleField.value.length > 200) {
+            showError(titleField, "Title cannot exceed 200 characters.");
+            isValid = false;
+        } else if (!validateChars(titleField.value)) {
+            showError(titleField, "Title contains invalid characters.");
+            isValid = false;
+        } else {
+            clearError(titleField);
+        }
+        
+        // Description validation
+        if (!descriptionField.value.trim()) {
+            showError(descriptionField, "Please provide a description for your artwork.");
+            isValid = false;
+        } else if (descriptionField.value.length < 20) {
+            showError(descriptionField, "Description must be at least 20 characters.");
+            isValid = false;
+        } else if (descriptionField.value.length > 2000) {
+            showError(descriptionField, "Description cannot exceed 2000 characters.");
+            isValid = false;
+        } else {
+            clearError(descriptionField);
+        }
+        
+        // Price validation
+        if (!priceField.value.trim()) {
+            showError(priceField, "Please provide a price for your artwork.");
+            isValid = false;
+        } else {
+            const price = parseFloat(priceField.value);
+            if (isNaN(price)) {
+                showError(priceField, "Price must be a valid number.");
+                isValid = false;
+            } else if (price < 10) {
+                showError(priceField, "Price must be at least ₹10.");
+                isValid = false;
+            } else if (price > 1000000) {
+                showError(priceField, "Price cannot exceed ₹1,000,000.");
+                isValid = false;
+            } else {
+                clearError(priceField);
+            }
+        }
+        
+        // Size validation
+        if (!sizeField.value.trim()) {
+            showError(sizeField, "Please provide the size of your artwork.");
+            isValid = false;
+        } else if (!validateSize(sizeField.value)) {
+            showError(sizeField, "Size must be in format 'width x height', e.g., '30x40'");
+            isValid = false;
+        } else {
+            clearError(sizeField);
+        }
+        
+        // Category validation
+        if (!categoryField.value) {
+            showError(categoryField, "Please select a category for your artwork.");
+            isValid = false;
+        } else {
+            clearError(categoryField);
+        }
+        
+        // Image validation
+        if (imageField.files.length === 0) {
+            showError(imageField, "Please select an image to upload.");
+            isValid = false;
+        } else {
+            const file = imageField.files[0];
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            const allowedExts = ['jpg', 'jpeg', 'png', 'webp'];
+            
+            if (!allowedExts.includes(fileExt)) {
+                showError(imageField, "Unsupported file extension. Use: " + allowedExts.join(', '));
+                isValid = false;
+            } else if (file.size > 5 * 1024 * 1024) { // 5MB in bytes
+                showError(imageField, "Image file too large. Size should not exceed 5MB.");
+                isValid = false;
+            } else {
+                clearError(imageField);
+            }
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            // Scroll to the first error
+            const firstError = document.querySelector('.error-message');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+    
+    // Helper functions
+    function validateSize(size) {
+        return /^\d+(\.\d+)?x\d+(\.\d+)?$/.test(size);
+    }
+    
+    function validateChars(text) {
+        return Array.from(text).every(c => c.match(/[a-zA-Z0-9\s\-_,.!?]/));
+    }
+    
+    function showError(element, message) {
+        // Find parent div.form-group
+        const formGroup = element.closest('.form-group');
+        
+        // Clear any existing error
+        clearError(element);
+        
+        // Create error message element
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message text-red-500 text-sm mt-1';
+        errorDiv.textContent = message;
+        
+        // Add error class to input
+        element.classList.add('border-red-500');
+        
+        // Add error message after input
+        formGroup.appendChild(errorDiv);
+    }
+    
+    function clearError(element) {
+        // Find parent div.form-group
+        const formGroup = element.closest('.form-group');
+        
+        // Remove error class from input
+        element.classList.remove('border-red-500');
+        
+        // Remove any existing error messages
+        const errorMessages = formGroup.querySelectorAll('.error-message');
+        errorMessages.forEach(el => el.remove());
+    }
+    
+    // Preview image on selection
+    imageField.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const preview = document.getElementById('image-preview');
+            if (!preview) {
+                const previewContainer = document.createElement('div');
+                previewContainer.className = 'mt-3';
+                previewContainer.innerHTML = `
+                    <p class="text-sm text-gray-600 mb-1">Image Preview:</p>
+                    <img id="image-preview" src="${URL.createObjectURL(this.files[0])}" alt="Preview" 
+                         class="max-h-64 rounded-md border border-gray-300">
+                `;
+                this.parentElement.appendChild(previewContainer);
+            } else {
+                preview.src = URL.createObjectURL(this.files[0]);
+                preview.style.display = 'block';
+            }
+        }
+    });
+});
+</script>
+
 {% endblock %}

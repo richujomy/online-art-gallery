@@ -25,4 +25,7 @@ urlpatterns = [
     path('admin/remove_artowrk/<int:artwork_id>',views.remove_artwork,name='remove_artwork'),
     path('admin/manage_customers/',views.manage_customers,name='manage_customers'),
     path('admin/remove_customer/<int:customer_id>',views.remove_customer, name='remove_customer'),
+
+    path('admin/artwork/approve-ajax/', views.approve_artwork_ajax, name='approve_artwork_ajax'),
+    path('admin/artwork/reject-ajax/', views.reject_artwork_ajax, name='reject_artwork_ajax'),
 ]

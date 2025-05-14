@@ -43,42 +43,80 @@
                     
                     <!-- Call to Action Button -->
                     <div class="mt-auto flex space-x-2">
-                    {% if artwork.sold %}
-                    <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
-                        text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
-                        focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
-                        dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
-                        dark:hover:bg-gray-600 dark:focus:ring-gray-800" disabled>
-                        Sold
-                    </button>
-                    {% else %}
-                      <a href="{% url 'cart:add_to_cart' artwork.id %}">                 
-                    <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
-                        text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
-                        focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
-                        dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
-                        dark:hover:bg-gray-600 dark:focus:ring-gray-800">Add to Cart 
-                    </button></a> 
-                    <a href="{% url 'checkout' artwork.id %}">
-                    <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
-                        text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
-                        focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
-                        dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
-                        dark:hover:bg-gray-600 dark:focus:ring-gray-800">
-                        Buy now
-                    </button>
-                    </a>
-                    {% endif %}
-                    </div>  
+                        {% if artwork.sold %}
+                            <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
+                                text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
+                                focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
+                                dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
+                                dark:hover:bg-gray-600 dark:focus:ring-gray-800" disabled>
+                                Sold
+                            </button>
+                        {% else %}
+                            <a href="{% url 'cart:add_to_cart' artwork.id %}">                 
+                                <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
+                                    text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
+                                    focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
+                                    dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
+                                    dark:hover:bg-gray-600 dark:focus:ring-gray-800">Add to Cart 
+                                </button>
+                            </a> 
+                            <a href="{% url 'checkout' artwork.id %}">
+                                <button type="button" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
+                                    text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
+                                    focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
+                                    dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
+                                    dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                                    Buy now
+                                </button>
+                            </a>
+                            <button onclick="openMessageModal()" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium 
+                                text-gray-900 hover:text-white border border-gray-800 hover:bg-gray-900 
+                                focus:ring-4 focus:outline-none focus:ring-gray-300 rounded-full 
+                                dark:border-gray-600 dark:text-gray-400 dark:hover:text-white 
+                                dark:hover:bg-gray-600 dark:focus:ring-gray-800">
+                                Message Artist
+                            </button>
+                        {% endif %}
+                    </div>
                     {% if messages %}
                     <div class="mb-4">
                         {% for message in messages  %}
                         <div class="p-3 text-white rounded-md {% if message.tags == 'success' %} bg-green-500 {% else %} bg-red-500 {% endif %}">
-                               {{ message }}
+                            {{ message }}
                         </div>
                         {% endfor %}
                     </div>
                     {% endif %}
+
+                    <!-- Message Modal - Fixed indentation and structure -->
+                    <div id="messageModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+                        <div class="relative top-1/2 transform -translate-y-1/2 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold">Message Artist</h3>
+                                <button onclick="closeMessageModal()" class="text-gray-500 hover:text-gray-700">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        
+                            <div id="messageContainer" class="h-64 overflow-y-auto mb-4 p-4 bg-gray-50 rounded">
+                                <!-- Messages will be loaded here -->
+                            </div>
+
+                            <form id="messageForm" class="space-y-4">
+                                {% csrf_token %}
+                                <input type="hidden" name="artwork_id" value="{{ artwork.id }}">
+                                <textarea name="message" class="w-full p-2 border rounded" rows="3" placeholder="Type your message..."></textarea>
+                                <button type="submit" class="w-full bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600">
+                                    Send Message
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Remove the duplicate Message Artist button that was here -->
+
                     <!-- Description -->
                     <div class="mb-8 mt-8">
                         <h2 class="text-lg font-semibold text-gray-700 mb-2">Description</h2>
@@ -102,4 +140,50 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openMessageModal() {
+    document.getElementById('messageModal').classList.remove('hidden');
+    loadMessages();
+}
+
+function closeMessageModal() {
+    document.getElementById('messageModal').classList.add('hidden');
+}
+
+function loadMessages() {
+    fetch(`/artworks/get-messages/{{ artwork.id }}/`)
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = data.messages.map(msg => `
+                <div class="mb-2 ${msg.sender__username === '{{ user.username }}' ? 'text-right' : ''}">
+                    <span class="inline-block bg-blue-100 rounded px-3 py-2">
+                        <strong>${msg.sender__username}</strong><br>
+                        ${msg.message}
+                    </span>
+                </div>
+            `).join('');
+        });
+}
+
+document.getElementById('messageForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('/artworks/send-message/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            this.reset();
+            loadMessages();
+        }
+    });
+});
+</script>
 {% endblock %}

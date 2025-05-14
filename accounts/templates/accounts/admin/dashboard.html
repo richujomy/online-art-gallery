@@ -1,3 +1,4 @@
+{% load static  %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -83,23 +84,16 @@
                     
                     <!-- Icons -->
                     <div class="flex items-center space-x-20">
-                        <button class="text-gray-500 hover:text-gray-700 relative">
-                            <i class="fas fa-bell text-lg"></i>
-                            <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
-                        </button>
-                        
                         <!-- User dropdown -->
-                        <div class="relative">
+                        <div class="relative px-12">
                             <button id="user-menu-button" class="flex items-center space-x-2 focus:outline-none">
-                                <img src="https://via.placeholder.com/40" alt="User" class="h-8 w-8 rounded-full">
+                                <img src="{% static 'images/artgallery.png' %}" alt="User" class="h-8 w-8 rounded-full">
                                 <span class="hidden md:block text-sm font-medium text-gray-700">Admin</span>
                                 <i class="fas fa-chevron-down text-xs text-gray-500"></i>
                             </button>
                             
                             <!-- Dropdown menu, show/hide based on dropdown state -->
                             <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                                <a href="#profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
-                                <a href="#settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
                                 <a href="{% url 'accounts:logout' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</a>
                             </div>
                         </div>
@@ -174,7 +168,7 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <div class="text-gray-500 text-sm">Monthly Revenue</div>
-                                    <div class="mt-1 text-3xl font-semibold">$24,350</div>
+                                    <div class="mt-1 text-3xl font-semibold">₹24,350</div>
                                     <div class="mt-2 text-sm text-green-500 flex items-center">
                                         <i class="fas fa-arrow-up mr-1"></i> 7% increase
                                     </div>
@@ -187,7 +181,7 @@
                     </div>
                     
                     <!-- Recent artworks and artists -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="lg:grid-cols-2 gap-8">
                         <!-- Recent artworks -->
                         
                         <div class="bg-white rounded-lg shadow">
@@ -230,98 +224,12 @@
                                     </table>
                                 </div>
                                 <div class="mt-4">
-                                    <a href="#artworks" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">View all artworks →</a>
+                                    <a href="{%url 'accounts:manage_artworks'%}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">View all artworks →</a>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Top artists -->
-                        <div class="bg-white rounded-lg shadow">
-                            <div class="px-6 py-4 border-b border-gray-200">
-                                <h2 class="font-semibold text-lg text-gray-800">Top Artists</h2>
-                            </div>
-                            <div class="p-6">
-                                <ul class="divide-y divide-gray-200">
-                                    <li class="py-4 flex items-center justify-between">
-                                        <div class="flex items-center">
-                                            <img src="https://via.placeholder.com/40" alt="Artist" class="h-10 w-10 rounded-full">
-                                            <div class="ml-3">
-                                                <p class="text-sm font-medium text-gray-900">Emma Davis</p>
-                                                <p class="text-sm text-gray-500">Contemporary, Oil</p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <p class="text-sm font-semibold text-gray-900">24 works</p>
-                                        </div>
-                                    </li>
-                                   
-                                </ul>
-                                <div class="mt-4">
-                                    <a href="#artists" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">View all artists →</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Upcoming exhibitions -->
-                    <div class="mt-8 bg-white rounded-lg shadow">
-                        <div class="px-6 py-4 border-b border-gray-200">
-                            <h2 class="font-semibold text-lg text-gray-800">Upcoming Exhibitions</h2>
-                        </div>
-                        <div class="p-6">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead>
-                                        <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exhibition Name</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artists</th>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white divide-y divide-gray-200">
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">Spring Collection 2025</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">Mar 15 - Apr 12, 2025</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">5 artists</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Confirmed</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                                <a href="#" class="text-red-600 hover:text-red-900">Delete</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm font-medium text-gray-900">Modern Perspectives</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">May 5 - Jun 18, 2025</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">3 artists</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Planning</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <a href="#" class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</a>
-                                                <a href="#" class="text-red-600 hover:text-red-900">Delete</a>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+                  
                 </div>
             {% endblock %}
             </main>

@@ -13,6 +13,50 @@
 
 <div class="bg-gray-100  flex flex-col items-center justify-start pt-8">
 
+ <div class="w-3/4 mx-auto mb-8">
+    <form method="GET" action="{% url 'artwork_list' %}" class="bg-gray-100  rounded-lg shadow-sm p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Category Filter -->
+            <div>
+                <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                <select name="category" id="category" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.value }}">{{ category.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Price Range -->
+            <div>
+                <label for="price_range" class="block text-sm font-medium text-gray-700 mb-1">Price Range</label>
+                <select name="price_range" id="price_range" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
+                    <option value="">All Prices</option>
+                    {% for range in price_ranges %}
+                        <option value="{{ range.value }}">{{ range.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Sort By -->
+            <div>
+                <label for="sort_by" class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
+                <select name="sort_by" id="sort_by" class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
+                    {% for option in sort_options %}
+                        <option value="{{ option.value }}">{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        
+        <!-- Apply Filter Button -->
+        <div class="flex justify-end mt-4">
+            <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-gray-800 rounded-md hover:bg-gray-700">
+                Apply Filters
+            </button>
+        </div>
+    </form>
+</div>
 
     <div id="default-carousel" class="relative w-3/4 mx-auto" data-carousel="slide">
     <!-- Carousel wrapper -->
@@ -100,7 +144,7 @@
 <!-- button end-->
 
    <!-- Category Section -->
-    <div class="w-full max-w-5xl mx-auto mb-16 px-4 pt-10">
+    {% comment %} <div class="w-full max-w-5xl mx-auto mb-16 px-4 pt-10">
         <h2 class="text-2xl font-semibold whitespace-nowrap dark:text-white  uppercase mb-8">Explore by Category</h2>
         
         <!-- Category Cards -->
@@ -157,8 +201,36 @@
                 </div>
             </a>
         </div>
-    </div>
+    </div> {% endcomment %}
    
+{% if not user.is_authenticated %}
+
+<div class="bg-gradient-to-r from-indigo-50 to-purple-50 flex rounded-lg shadow-lg max-w-6xl mx-auto overflow-hidden mt-10">
+    <div class="w-1/2 p-10 flex flex-col justify-center">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">Time to Showcase Your Arts</h1>
+        <p class="text-gray-700 mb-6">
+            "You've created something beautiful. Now, it's time for the world to see it. At our gallery, we provide the perfect platform for emerging and established artists to display their passion and creativity. Your artistic journey deserves recognition, and you are at the right place to begin that adventure."
+        </p>
+        <p class="text-gray-600 mb-6">
+            Every brushstroke tells a story. Every sculpture captures an emotion. Share your artistic voice with an audience that appreciates the beauty and meaning behind your work.
+        </p>
+        <div class="text-gray-700 font-semibold mb-2">
+            Join our community of visionaries today
+        </div>
+        <div class="flex">
+            <a href="{% url 'accounts:signup' %}" class="px-6 py-3 font-medium text-white transition-colors duration-300 bg-gray-600 rounded-full hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
+                Join as an Artist
+            </a>
+        </div>
+    </div>
+    <div class="w-1/2">
+        <img src="{% static 'images/artist-showcase.jpg' %}" alt="Artist Showcase" class="w-full h-full object-cover">
+    </div>
+</div>
+
+{% endif %}
+
+
  <div class="w-full max-w-6xl mx-auto px-4 mb-16">
             <div class="w-full max-w-5xl mx-auto mb-12 px-4 pt-10">
                 <h2 class="text-2xl font-semibold whitespace-nowrap dark:text-white uppercase mb-8">New Releases</h2>
@@ -185,7 +257,7 @@
 
     <!-- Artists -->
 <!-- Artists Section -->
-<div class="w-full max-w-6xl mx-auto px-4 py-12">
+{% comment %} <div class="w-full max-w-6xl mx-auto px-4 py-12">
     <!-- Heading -->
     <h2 class="text-2xl font-bold text-center mb-8">MEET OUR ARTISTS</h2>
     
@@ -225,9 +297,11 @@
         </a>
     </div>
 </div>
-
+ {% endcomment %}
 
      <!-- Artists -->
+
+
         <!-- artulove div -->
         <div class="bg-gray-100 flex rounded-lg shadow-lg max-w-6xl mx-auto overflow-hidden mt-10">
                 <div class="w-1/2">
@@ -240,14 +314,51 @@
                     Whether you’re looking to discover a new artist, add a statement piece to your home, 
                     or commemorate an important life event, Artzy Art is your portal to thousands of original works by today’s top artists.”
                     </p>
-                    <div class="text-gray-700 font-semibold mb-6">
+                    <div class="text-gray-700 font-semibold mb-6" id="About">
                     Chief Curator & VP, Art Advisory
                 </div>
             </div>
         </div>
 
 
-    </div>
+    <div class="bg-gray-100 py-16 mt-10 mb-8">
+            <div class="max-w-6xl mx-auto px-4">
+                <!-- About Us Section -->
+                <div class="mb-16">
+                <!-- Logo and Heading Section -->
+                <div class="flex flex-col items-center mb-10">
+                    <h2 class="text-3xl font-bold text-gray-800 text-center">About us</h2>
+                </div>
+
+                <!-- Content Section -->
+                <div class="flex flex-col md:flex-row gap-10 items-center md:items-start">
+                    <!-- Text Section -->
+                    <div class="md:w-2/3 text-left">
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Founded in <span class="font-semibold text-indigo-700">2025</span>, <span class="italic font-medium">Artzy</span> was born from a deep passion for art and the desire to create a space where creativity knows no bounds. As an online art gallery, we aim to connect passionate creators with art enthusiasts from all walks of life. In an age where digital experiences dominate, we strive to bring the warmth, depth, and soul of art into homes, workspaces, and public spaces worldwide. Every piece showcased on our platform is more than just an artwork — it's a story, a feeling, a voice.
+                    </p>
+
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        Our journey began with a simple yet powerful idea: to give emerging artists the visibility and recognition they deserve. Over time, <span class="font-medium text-indigo-600">Artzy</span> has evolved into a thriving hub that celebrates diversity in artistic expression. We feature a wide range of styles and mediums — from <span class="italic">classic oil paintings</span> to <span class="italic">experimental digital art</span>, from <span class="italic">vivid sculptures</span> to <span class="italic">immersive mixed media</span>. This diversity ensures that every visitor finds something that resonates with their taste and emotions.
+                    </p>
+
+                    <p class="text-gray-600 mb-4 leading-relaxed">
+                        At the heart of our platform lies a commitment to authenticity, quality, and community. Every artist who joins our gallery is carefully selected through a curation process that values originality, craftsmanship, and vision. We work closely with artists not just to exhibit their work but to help them grow professionally. Through exclusive interviews, behind-the-scenes content, and featured spotlights, we ensure that our visitors don’t just browse art — they experience the journey behind each masterpiece.
+                    </p>
+
+                    <p class="text-gray-600 leading-relaxed">
+                        Our <span class="bg-indigo-100 px-1 rounded">mission</span> is twofold: to make art accessible and to make artists successful. We leverage modern technology to bring art to your fingertips, enabling easy browsing, secure transactions, and fast global shipping. Meanwhile, artists benefit from transparent earnings, promotional support, and a platform that genuinely values their voice. Whether you're a seasoned collector or a curious first-time buyer, <span class="text-indigo-600 font-medium">Artzy</span> is your trusted gateway into the world of art. Together, let's celebrate the power of creativity to <span class="font-semibold">inspire</span>, <span class="font-semibold">challenge</span>, and <span class="font-semibold">transform</span> the world around us.
+                    </p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+                
+    
+</div>
 </div>
 
 
