@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install python deps
 COPY requirements.txt .
-RUN pip install  -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy project files
 COPY . .
@@ -19,7 +19,8 @@ COPY . .
 # Expose port (gunicorn will bind here)
 EXPOSE 8000
 
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
 # Default command (compose overrides this anyway)
 CMD ["gunicorn", "onlineartgallery.wsgi:application", "--bind", "0.0.0.0:8000"]
-
-Run python manage.py collectstatic --noinput
