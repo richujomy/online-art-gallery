@@ -19,8 +19,5 @@ COPY . .
 # Expose port (gunicorn will bind here)
 EXPOSE 8000
 
-# Collect static files
-RUN python manage.py collectstatic --noinput
-
 # Default command (compose overrides this anyway)
 CMD ["gunicorn", "onlineartgallery.wsgi:application", "--bind", "0.0.0.0:8000"]
