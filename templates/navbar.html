@@ -14,7 +14,7 @@
               <div class="hidden lg:flex lg:items-center lg:space-x-10" id="navbar">
                   {% if user.is_authenticated and user.profile.role == 'designer' %}
                     <a href="{% url 'accounts:designer_dashboard' %}" title="" class="text-base font-medium text-black"> Home </a> 
-                    <a href="{% url 'upload_artwork' %}" title="" class="text-base font-medium text-black"> Upload Artwork </a>
+                    <a href="{% url 'upload_artwork' %}" title="" class="text-base font-medium text-black"> Upload Artworks? </a>
                         {% else %}
                   <a href="{% url 'home' %}" title="" class="text-base font-medium text-black"> Home </a>
 
