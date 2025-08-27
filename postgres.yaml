@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:             #so this selector matches the pod template's labels
+    matchLabels:
+      app: postgres     #says "all the pods with label app: postgres are managed by this deployment"
+  template:             #configuration for pod
+    metadata:
+      labels:
+        app: postgres   #label for pod
+    spec:
+      containers:       # creates a container inside the pod using the given image
+        - name: postgres
+          image: postgres:14 
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+
+            - secretRef:
+                name: postgres-secrets
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          emptyDir: {} # For learning, use emptyDir (ephemeral). In real case, use PVC.
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+  clusterIP: None # Headless service (optional)

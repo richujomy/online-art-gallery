@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       # Step 1: Checkout code
@@ -33,3 +33,19 @@ jobs:
       # Step 4: Confirmation
       - name: Echo done
         run: echo "✅ Docker image pushed successfully!"
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+      - name: Point to Minikube context
+        run: |
+          kubectl config use-context minikube
+
+      - name: Apply manifests
+        run: |
+          kubectl apply -f .
+      
+      - name: Echo min-done
+        run: echo "✅ Applied to minikube successfully!"
