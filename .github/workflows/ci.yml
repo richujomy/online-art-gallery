@@ -1,4 +1,4 @@
-name: CI - Build and Push Docker Image
+name: CI - Build and Deploy to Minikube
 
 on:
   push:
@@ -33,12 +33,6 @@ jobs:
       # Step 4: Confirmation
       - name: Echo done
         run: echo "✅ Docker image pushed successfully!"
-      - name: Install kubectl on Windows
-        run: |
-          Invoke-WebRequest -Uri https://dl.k8s.io/release/stable.txt -OutFile version.txt
-          $version = Get-Content version.txt
-          Invoke-WebRequest -Uri "https://dl.k8s.io/release/$version/bin/windows/amd64/kubectl.exe" -OutFile kubectl.exe
-          echo "${{ github.workspace }}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
 
 
@@ -48,7 +42,7 @@ jobs:
 
       - name: Apply manifests
         run: |
-          kubectl apply -f .
+          kubectl apply -f k8s/
       
-      - name: Echo min-done
-        run: echo "✅ Applied to minikube successfully!"
+      - name: Verify deployment
+        run: kubectl rollout status deployment/online-art-gallery
