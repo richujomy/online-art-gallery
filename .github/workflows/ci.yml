@@ -34,10 +34,13 @@ jobs:
       - name: Echo done
         run: echo "✅ Docker image pushed successfully!"
 
-      - name: Install kubectl
+      - name: Install kubectl on Windows
         run: |
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          Invoke-WebRequest -Uri https://dl.k8s.io/release/stable.txt -OutFile version.txt
+          $version = Get-Content version.txt
+          Invoke-WebRequest -Uri "https://dl.k8s.io/release/$version/bin/windows/amd64/kubectl.exe" -OutFile kubectl.exe
+          Move-Item kubectl.exe C:\Windows\System32\kubectl.exe -Force
+
 
       - name: Point to Minikube context
         run: |
