@@ -33,13 +33,13 @@ jobs:
       # Step 4: Confirmation
       - name: Echo done
         run: echo "✅ Docker image pushed successfully!"
-
       - name: Install kubectl on Windows
         run: |
           Invoke-WebRequest -Uri https://dl.k8s.io/release/stable.txt -OutFile version.txt
           $version = Get-Content version.txt
           Invoke-WebRequest -Uri "https://dl.k8s.io/release/$version/bin/windows/amd64/kubectl.exe" -OutFile kubectl.exe
-          Move-Item kubectl.exe C:\Windows\System32\kubectl.exe -Force
+          echo "${{ github.workspace }}" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
 
 
       - name: Point to Minikube context
